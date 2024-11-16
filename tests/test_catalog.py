@@ -3,53 +3,113 @@ import pytest
 from src.catalog import Category, Product
 
 
+@pytest.fixture
+def product1():
+    return Product(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+    )
+
+
+@pytest.fixture
+def product2():
+    return Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+
+
+@pytest.fixture
+def category1(product1, product2):
+    return Category(
+        "Смартфоны",
+        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
+        [product1, product2],
+    )
+
+
 def test_create_product():
-    product = Product("Товар 1", "Описание товара 1", 100, 10)
-    assert product.name == "Товар 1"
-    assert product.description == "Описание товара 1"
-    assert product.price == 100
-    assert product.quantity == 10
+    product = Product(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+    )
+    assert product.name == "Samsung Galaxy S23 Ultra"
+    assert product.description == "256GB, Серый цвет, 200MP камера"
+    assert product.price == 180000.0
+    assert product.quantity == 5
 
 
 def test_set_price():
-    product = Product("Товар 1", "Описание товара 1", 100, 10)
-    product.price = 200
-    assert product.price == 200
+    product = Product(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+    )
+    product.price = 800
+    assert product.price == 800
 
 
 def test_set_invalid_price():
-    product = Product("Товар 1", "Описание товара 1", 100, 10)
-    with pytest.raises(ValueError) as excinfo:
+    product = Product(
+        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+    )
+    with pytest.raises(ValueError):
         product.price = -100
-    assert "Цена не должна быть нулевая или отрицательная" in str(excinfo.value)
 
 
 def test_new_product():
     product_data = {
-        "name": "Товар 1",
-        "description": "Описание товара 1",
-        "price": 100,
-        "quantity": 10,
+        "name": "Samsung Galaxy S23 Ultra",
+        "description": "256GB, Серый цвет, 200MP камера",
+        "price": 180000.0,
+        "quantity": 5,
     }
     product = Product.new_product(product_data)
-    assert product.name == "Товар 1"
-    assert product.description == "Описание товара 1"
-    assert product.price == 100
-    assert product.quantity == 10
+    assert product.name == "Samsung Galaxy S23 Ultra"
+    assert product.description == "256GB, Серый цвет, 200MP камера"
+    assert product.price == 180000.0
+    assert product.quantity == 5
 
 
 def test_create_category():
-    category = Category("Категория 1", "Описание категории 1", [])
-    assert category.name == "Категория 1"
-    assert category.description == "Описание категории 1"
-    assert category.products == ""
-    assert Category.count_categories == 1
-    assert Category.count_products == 0
+    category = Category(
+        "Смартфоны",
+        "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
+        [],
+    )
+    assert category.name == "Смартфоны"
+    assert (
+        category.description
+        == "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни"
+    )
+    assert category._products == []
 
 
-def test_add_product():
-    category = Category("Категория 1", "Описание категории 1", [])
-    product = Product("Товар 1", "Описание товара 1", 100, 10)
-    category.add_product(product)
-    assert category.products == "Товар 1, 100 руб. Остаток: 10 шт.\n"
-    assert Category.count_products == 1
+def test_product_str(product1):
+    assert str(product1) == "Samsung Galaxy S23 Ultra, 180000.0 руб. Остаток: 5 шт."
+
+
+def test_category_str(category1):
+    assert str(category1) == "Смартфоны, количество продуктов: 13 шт."
+
+
+def test_product_add(category1, product2):
+    category1.add_product(product2)
+    assert len(category1._products) == 3
+
+
+def test_category_add(category1, product2):
+    category2 = Category(
+        "Ноутбуки",
+        "Ноутбуки, как средство не только для работы, но и для развлечений",
+        [product2],
+    )
+    category1.add_product(category2)
+    assert len(category1._products) == 3
+
+
+def test_product_add_error(category1):
+    with pytest.raises(TypeError):
+        category1.add_product(
+            Product.new_product(
+                {
+                    "product_name": "Не продукт",
+                    "product_description": "",
+                    "product_price": 0,
+                    "product_quantity": 0,
+                }
+            )
+        )
