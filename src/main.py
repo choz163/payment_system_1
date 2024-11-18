@@ -13,9 +13,7 @@ if __name__ == "__main__":
         [product1, product2, product3],
     )
 
-    print(
-        category1.products
-    )  # AttributeError: 'Category' object has no attribute 'products'
+    print(category1.products)
     category1.add_product(Product('55" QLED 4K', "Фоновая подсветка", 123000.0, 7))
     print(category1.products)
     print(category1.product_count)
@@ -35,8 +33,17 @@ if __name__ == "__main__":
 
     new_product.price = 800
     print(new_product.price)
+    new_product.price = 1
+    print(new_product.price)  # Цена не должна быть нулевая или отрицательная
 
-    new_product.price = -100
-    print(new_product.price)  # Цена не должна быть нулевая или отрицательная
-    new_product.price = 0
-    print(new_product.price)  # Цена не должна быть нулевая или отрицательная
+    print(str(product1))
+    print(str(product2))
+    print(str(product3))
+
+    print(str(category1))
+
+    print(category1.products)
+
+    print(product1 + product2)
+    print(product1 + product3)
+    print(product2 + product3)
