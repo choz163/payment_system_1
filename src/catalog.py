@@ -1,3 +1,6 @@
+from typing import List
+
+
 class Product:
     def __init__(self, name, description, price, quantity):
         self.name = name
@@ -6,7 +9,10 @@ class Product:
         self.quantity = quantity
 
     def __add__(self, other):
-        return self.price * self.quantity + other.price * other.quantity
+        if isinstance(self, other.__class__):
+            return self.price * self.quantity + other.price * other.quantity
+        else:
+            raise TypeError("Можно складывать только объекты одного класса")
 
     @property
     def price(self):
@@ -27,12 +33,48 @@ class Product:
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
 
+class Smartphone(Product):
+    def __init__(
+        self,
+        name,
+        description,
+        price,
+        quantity,
+        efficiency,
+        model,
+        memory,
+        color,
+    ):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+
+class LawnGrass(Product):
+    def __init__(
+        self,
+        name,
+        description,
+        price,
+        quantity,
+        country,
+        germination_period,
+        color,
+    ):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+
 class Category:
     count_categories = 0
     count_products = 0
     product_count = 0
 
-    def __init__(self, name, description, products):
+    def __init__(self, name, description, products: List[Product]):
         self.name = name
         self.description = description
         self._products = products
@@ -47,8 +89,9 @@ class Category:
         return products_str
 
     def add_product(self, product):
+        if not isinstance(product, Product):
+            raise TypeError("Можно добавлять только объекты класса Product")
         self._products.append(product)
-        Category.count_products += 1
 
     def __str__(self):
         total_quantity = 0
@@ -57,6 +100,9 @@ class Category:
         return f"{self.name}, количество продуктов: {total_quantity} шт."
 
     def __add__(self, other):
-        return sum(
-            product.price * product.quantity for product in self._products
-        ) + sum(product.price * product.quantity for product in other._products)
+        if isinstance(self, other.__class__):
+            return sum(
+                product.price * product.quantity for product in self._products
+            ) + sum(product.price * product.quantity for product in other._products)
+        else:
+            raise TypeError("Можно складывать только объекты одного класса")
