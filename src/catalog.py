@@ -1,36 +1,32 @@
+from abc import ABC, abstractmethod
 from typing import List
 
 
-class Product:
+class BaseProduct(ABC):
     def __init__(self, name, description, price, quantity):
         self.name = name
         self.description = description
-        self._price = price
+        self.price = price
         self.quantity = quantity
+        print(
+            f"Создан объект класса {self.__class__.__name__} с параметрами: name={name}, description={description}, price={price}, quantity={quantity}"
+        )
 
-    def __add__(self, other):
-        if isinstance(self, other.__class__):
-            return self.price * self.quantity + other.price * other.quantity
-        else:
-            raise TypeError("Можно складывать только объекты одного класса")
+    @abstractmethod
+    def __str__(self):
+        pass
 
-    @property
-    def price(self):
-        return self._price
 
-    @price.setter
-    def price(self, new_price):
-        if new_price <= 0:
-            raise ValueError("Цена не должна быть нулевая или отрицательная")
-        else:
-            self._price = new_price
+class Product(BaseProduct):
+    def __init__(self, name, description, price, quantity):
+        super().__init__(name, description, price, quantity)
+
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     @classmethod
     def new_product(cls, product_data):
         return cls(**product_data)
-
-    def __str__(self):
-        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
 
 class Smartphone(Product):
@@ -51,6 +47,13 @@ class Smartphone(Product):
         self.memory = memory
         self.color = color
 
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    @classmethod
+    def new_product(cls, product_data):
+        return cls(**product_data)
+
 
 class LawnGrass(Product):
     def __init__(
@@ -68,9 +71,16 @@ class LawnGrass(Product):
         self.germination_period = germination_period
         self.color = color
 
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    @classmethod
+    def new_product(cls, product_data):
+        return cls(**product_data)
+
 
 class Category:
-    count_categories = 0
+    category_count = 0
     count_products = 0
     product_count = 0
 
@@ -78,7 +88,7 @@ class Category:
         self.name = name
         self.description = description
         self._products = products
-        Category.count_categories += 1
+        Category.category_count += 1
         Category.count_products += len(self._products)
 
     @property

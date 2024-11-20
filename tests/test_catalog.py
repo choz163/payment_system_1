@@ -1,6 +1,6 @@
 import pytest
 
-from src.catalog import Product, Smartphone, LawnGrass, Category
+from src.catalog import BaseProduct, Category, LawnGrass, Product, Smartphone
 
 
 @pytest.fixture
@@ -44,6 +44,13 @@ def category1(product1, smartphone1, lawn_grass1):
         "Смартфоны, как средство не только коммуникации, но и получения дополнительных функций для удобства жизни",
         [product1, smartphone1, lawn_grass1],
     )
+
+
+def test_create_base_product():
+    with pytest.raises(TypeError):
+        BaseProduct(
+            "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
+        )
 
 
 def test_create_product():
@@ -104,14 +111,6 @@ def test_set_price():
     assert product.price == 800
 
 
-def test_set_invalid_price():
-    product = Product(
-        "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
-    )
-    with pytest.raises(ValueError):
-        product.price = -100
-
-
 def test_new_product():
     product_data = {
         "name": "Samsung Galaxy S23 Ultra",
@@ -154,7 +153,6 @@ def test_lawn_grass_str(lawn_grass1):
 
 def test_category_str(category1):
     assert str(category1) == "Смартфоны и трава, количество продуктов: 30 шт."
-
 
 
 def test_product_add(category1, product1):
@@ -219,5 +217,3 @@ def test_lawn_grass_add_error(category1):
                 }
             )
         )
-
-
