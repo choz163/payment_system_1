@@ -29,7 +29,15 @@ class Product(BaseProduct):
         return cls(**product_data)
 
 
-class Smartphone(Product):
+class LogMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(
+            f"Создан объект класса {self.__class__.__name__} с параметрами: {args}, {kwargs}"
+        )
+
+
+class Smartphone(Product, LogMixin):
     def __init__(
         self,
         name,
@@ -55,7 +63,7 @@ class Smartphone(Product):
         return cls(**product_data)
 
 
-class LawnGrass(Product):
+class LawnGrass(Product, LogMixin):
     def __init__(
         self,
         name,
