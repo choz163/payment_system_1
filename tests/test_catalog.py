@@ -4,6 +4,11 @@ from src.catalog import BaseProduct, Category, LawnGrass, Product, Smartphone
 
 
 @pytest.fixture
+def category_empty():
+    return Category("Пустая категория", "Категория без продуктов", [])
+
+
+@pytest.fixture
 def product1():
     return Product(
         "Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5
@@ -217,3 +222,7 @@ def test_lawn_grass_add_error(category1):
                 }
             )
         )
+
+
+def test_middle_price_empty(category_empty):
+    assert category_empty.middle_price() == 0
