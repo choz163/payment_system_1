@@ -124,3 +124,11 @@ class Category:
             ) + sum(product.price * product.quantity for product in other._products)
         else:
             raise TypeError("Можно складывать только объекты одного класса")
+
+    def middle_price(self):
+        try:
+            return sum(
+                product.price * product.quantity for product in self._products
+            ) / len(self._products)
+        except ZeroDivisionError:
+            return 0
